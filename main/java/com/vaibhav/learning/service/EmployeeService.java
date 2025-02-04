@@ -4,14 +4,14 @@ import com.vaibhav.learning.dto.EmployeeDto;
 import com.vaibhav.learning.entity.Employee;
 import com.vaibhav.learning.mapper.EmployeeMapper;
 import com.vaibhav.learning.repository.EmployeeRepository;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmployeeService  implements InitializingBean, DisposableBean {
+public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
@@ -22,14 +22,15 @@ public class EmployeeService  implements InitializingBean, DisposableBean {
         System.out.println("Employee Constructor Initialized");
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        System.out.println("\nAfter Bean is created, afterPropertiesSet called\n");
+   @PostConstruct
+    public void implementPostConstruct() throws Exception {
+        System.out.println("\nInit Step after Employee Service is created. Post Construct\n");
     }
 
-    @Override
+
+    @PreDestroy
     public void destroy() throws Exception {
-        System.out.println("\n Before Destroying Bean, destroy is called");
+        System.out.println("\n Before Destroying Employee Service , calling PreDestroy");
     }
 
 

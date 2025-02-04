@@ -9,7 +9,7 @@ public class LearningApplication {
 
 	public static void main(String[] args) {
 		 ConfigurableApplicationContext applicationContext = SpringApplication.run(LearningApplication.class, args);
-		System.out.println("Application Context Called, Beans are scanned and created");
+		System.out.println("\nApplication Context Called, Beans are scanned and created\n");
 		applicationContext.close();
 	}
 
