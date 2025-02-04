@@ -6,10 +6,12 @@ import com.vaibhav.learning.mapper.EmployeeMapper;
 import com.vaibhav.learning.repository.EmployeeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmployeeService {
+public class EmployeeService  implements InitializingBean, DisposableBean {
 
     private final EmployeeRepository employeeRepository;
 
@@ -17,6 +19,17 @@ public class EmployeeService {
 
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
+        System.out.println("Employee Constructor Initialized");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("\nAfter Bean is created, afterPropertiesSet called\n");
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("\n Before Destroying Bean, destroy is called");
     }
 
 
@@ -75,4 +88,7 @@ public class EmployeeService {
             employeeRepository.deleteEmployeeById(id);
         }
     }
+
+
+
 }
