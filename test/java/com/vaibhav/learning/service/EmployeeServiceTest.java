@@ -2,6 +2,7 @@ package com.vaibhav.learning.service;
 
 import com.vaibhav.learning.dto.EmployeeDto;
 import com.vaibhav.learning.entity.Employee;
+import com.vaibhav.learning.exception.EmployeeNotFoundException;
 import com.vaibhav.learning.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class EmployeeServiceTest {
@@ -65,10 +67,21 @@ class EmployeeServiceTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
+    // EmployeeServiceTest.java
+
+    @Test
+    void deleteEmployeeById_ThrowsEmployeeNotFoundException() {
+        when(employeeRepository.findById(anyInt())).thenReturn(Optional.empty());
+        assertThrows(EmployeeNotFoundException.class, () -> {
+            employeeService.deleteEmployeeById(1);
+        });
+    }
+
     @Test
     void updateEmployeeById_UpdatesExistingEmployee() {
         Employee employee = new Employee();
         when(employeeRepository.findById(anyInt())).thenReturn(Optional.of(employee));
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
         ResponseEntity<?> response = employeeService.updateEmployeeById(1, new EmployeeDto());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -76,8 +89,9 @@ class EmployeeServiceTest {
     @Test
     void updateEmployeeById_ThrowsEmployeeNotFoundException() {
         when(employeeRepository.findById(anyInt())).thenReturn(Optional.empty());
-        ResponseEntity<?> response = employeeService.updateEmployeeById(1, new EmployeeDto());
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertThrows(EmployeeNotFoundException.class, () -> {
+            employeeService.updateEmployeeById(1, new EmployeeDto());
+        });
     }
 
     @Test
@@ -86,12 +100,5 @@ class EmployeeServiceTest {
         when(employeeRepository.findById(anyInt())).thenReturn(Optional.of(employee));
         ResponseEntity<?> response = employeeService.deleteEmployeeById(1);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @Test
-    void deleteEmployeeById_ThrowsEmployeeNotFoundException() {
-        when(employeeRepository.findById(anyInt())).thenReturn(Optional.empty());
-        ResponseEntity<?> response = employeeService.deleteEmployeeById(1);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }
