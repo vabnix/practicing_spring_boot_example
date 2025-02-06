@@ -1,7 +1,10 @@
 package com.vaibhav.learning.entity;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
+@Data
 public class ErrorResponse {
     private LocalDateTime dateTime;
     private String message;
