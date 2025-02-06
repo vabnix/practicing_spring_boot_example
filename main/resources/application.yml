@@ -13,6 +13,9 @@ spring:
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
+  output:
+    ansi:
+      enabled: ALWAYS
 
   logging:
     level:
@@ -20,4 +23,4 @@ spring:
         springframework:
           web: DEBUG
     pattern:
-      console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+      console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr([%thread]){magenta} %clr(%-5level) %clr(%logger{36}){cyan} %clr(-){faint} %msg%n"

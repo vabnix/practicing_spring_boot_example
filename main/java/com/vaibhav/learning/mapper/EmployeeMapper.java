@@ -32,8 +32,8 @@ public class EmployeeMapper {
                 EmployeeDto employeeDto = new EmployeeDto();
                 employeeDto.setId(employee.getId());
                 employeeDto.setName(employee.getName());
-                employeeDto.setDepartment(employeeDto.getDepartment());
-                employeeDto.setLocation(employeeDto.getLocation());
+                employeeDto.setDepartment(employee.getDepartment());
+                employeeDto.setLocation(employee.getLocation());
                 employeeDtoList.add(employeeDto);
             }
             return employeeDtoList;

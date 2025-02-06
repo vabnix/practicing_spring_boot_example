@@ -2,6 +2,8 @@ package com.vaibhav.learning.controller;
 
 import com.vaibhav.learning.dto.EmployeeDto;
 import com.vaibhav.learning.service.EmployeeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,8 @@ import java.util.List;
 @RequestMapping(path = "/api", produces = "application/json")
 public class EmployeeController {
 
+    private final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+
     @Autowired
     private final EmployeeService employeeService;
 
@@ -21,6 +25,7 @@ public class EmployeeController {
 
     @GetMapping("/employees")
     public ResponseEntity<?> getEmployees(){
+        logger.info("Request for getting all employees called!");
         return employeeService.getAllEmployees();
     }
 
