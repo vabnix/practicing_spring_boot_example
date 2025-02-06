@@ -109,10 +109,4 @@ public class EmployeeService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @ExceptionHandler(EmployeeNotFoundException.class)
-    public ResponseEntity<?> handleEmployeNotFoundException(EmployeeNotFoundException exception, String message){
-        ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(), exception.getMessage(), message);
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
-
 }
