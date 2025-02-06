@@ -2,13 +2,20 @@ package com.vaibhav.learning.service;
 
 import com.vaibhav.learning.dto.EmployeeDto;
 import com.vaibhav.learning.entity.Employee;
+import com.vaibhav.learning.entity.ErrorResponse;
+import com.vaibhav.learning.exception.EmployeeNotFoundException;
 import com.vaibhav.learning.mapper.EmployeeMapper;
 import com.vaibhav.learning.repository.EmployeeRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class EmployeeService {
@@ -34,62 +41,71 @@ public class EmployeeService {
     }
 
 
-    public EmployeeDto getAllEmployees() {
-        Employee employee = employeeRepository.getAllEmployees();
-        return EmployeeMapper.entityToDtoMapper(employee);
+    public ResponseEntity<?> getAllEmployees() {
+        List<Employee> employeeList = employeeRepository.findAll();
+        return new ResponseEntity<>(EmployeeMapper.entityToDtoMapper(employeeList),HttpStatus.OK);
     }
 
-    public EmployeeDto getEmployeeById(Integer id) {
+    public ResponseEntity<?> getEmployeeById(Integer id) {
         EmployeeDto employeeDto = new EmployeeDto();
         if(id!=null){
-            Employee employee = employeeRepository.getEmployeeById(id);
-            employeeDto = EmployeeMapper.entityToDtoMapper(employee);
-            return employeeDto;
+            try {
+                Employee employee = employeeRepository.findById(id)
+                        .orElseThrow(()-> new EmployeeNotFoundException("Employee Not Found with Id: "+ id));
+                employeeDto = EmployeeMapper.entityToDtoMapper(employee);
+                return new ResponseEntity<>(employeeDto, HttpStatus.OK);
+            } catch (EmployeeNotFoundException e) {
+                ErrorResponse errorResponse = new ErrorResponse(LocalDateTime.now(),e.getMessage(), "Employee Not Found");
+                return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+            }
         } else {
                 logger.error("Entered Employee Id is empty or null");
                 return null;
         }
     }
 
-    public void addEmployee(EmployeeDto employeeDto) {
+    public ResponseEntity<?> addEmployee(EmployeeDto employeeDto) {
         if(employeeDto != null){
             Employee employee = new Employee();
             employee = EmployeeMapper.dtoToEntityMapper(employeeDto);
-            employeeRepository.addEmployee(employee);
+            employeeRepository.save(employee);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             logger.error("Employee data is empty or null");
-            return;
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    public EmployeeDto updateEmployeeById(Integer id, EmployeeDto employeeDto) {
+    public ResponseEntity<?> updateEmployeeById(Integer id, EmployeeDto employeeDto) {
         if(id==null){
             logger.error("Employee Id cannot be null");
-            return null;
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        EmployeeDto dto = getEmployeeById(id);
-        dto.setId(employeeDto.getId());
-        dto.setName(employeeDto.getName());
-        dto.setLocation(employeeDto.getLocation());
-        dto.setDepartment(employeeDto.getDepartment());
 
-        Employee employee = EmployeeMapper.dtoToEntityMapper(dto);
-        Employee updatedEmployee = employeeRepository.updateEmployee(employee);
-        return EmployeeMapper.entityToDtoMapper(updatedEmployee);
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(()-> new EmployeeNotFoundException("Employee Not Found with Id: "+ id));
+        employee.setId(employeeDto.getId());
+        employee.setName(employeeDto.getName());
+        employee.setLocation(employeeDto.getLocation());
+        employee.setDepartment(employeeDto.getDepartment());
 
+        Employee updatedEmployee = employeeRepository.save(employee);
+        return new ResponseEntity<>(EmployeeMapper.entityToDtoMapper(updatedEmployee), HttpStatus.OK);
     }
 
-    public void deleteEmployeeById(Integer id) {
+
+
+    public ResponseEntity<?> deleteEmployeeById(Integer id) {
         if(id==null){
             logger.error("Employee Id cannot be null");
-            return;
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        EmployeeDto dto = getEmployeeById(id);
-        if (dto.getId() != null){
-            employeeRepository.deleteEmployeeById(id);
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(()-> new EmployeeNotFoundException("Employee Not Found with Id: "+ id));
+        if (employee.getId() != null){
+            employeeRepository.deleteById(id);
         }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 
 }
