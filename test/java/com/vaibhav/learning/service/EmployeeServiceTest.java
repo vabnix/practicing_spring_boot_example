@@ -4,6 +4,8 @@ import com.vaibhav.learning.dto.EmployeeDto;
 import com.vaibhav.learning.entity.Employee;
 import com.vaibhav.learning.exception.EmployeeNotFoundException;
 import com.vaibhav.learning.repository.EmployeeRepository;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -30,6 +32,18 @@ class EmployeeServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Perform cleanup after each test
+        System.out.println("Cleaning up after each test...");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        // Perform cleanup after all tests
+        System.out.println("Cleaning up after all tests...");
     }
 
     @Test
@@ -75,6 +89,7 @@ class EmployeeServiceTest {
         assertThrows(EmployeeNotFoundException.class, () -> {
             employeeService.deleteEmployeeById(1);
         });
+        doNothing().when(employeeRepository).deleteById(1);
     }
 
     @Test

@@ -2,6 +2,8 @@ package com.vaibhav.learning.controller;
 
 import com.vaibhav.learning.dto.EmployeeDto;
 import com.vaibhav.learning.service.EmployeeService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,6 +26,18 @@ class EmployeeControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Perform cleanup after each test
+        System.out.println("Cleaning up after each test...");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        // Perform cleanup after all tests
+        System.out.println("Cleaning up after all tests...");
     }
 
     @Test
